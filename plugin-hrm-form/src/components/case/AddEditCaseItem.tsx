@@ -86,6 +86,7 @@ const AddEditCaseItem: React.FC<Props> = ({
   routing,
   itemType,
   setConnectedCase,
+  setSavedConnectedCase,
   updateTempInfo,
   changeRoute,
   formDefinition,
@@ -145,7 +146,7 @@ const AddEditCaseItem: React.FC<Props> = ({
     customFormHandlers,
   ]);
 
-  const save = async shouldStayInForm => {
+  const save = async () => {
     const { info, id } = connectedCaseState.connectedCase;
     const form = transformValues(formDefinition)(getTemporaryFormContent(temporaryCaseInfo));
     const now = new Date().toISOString();
@@ -178,6 +179,8 @@ const AddEditCaseItem: React.FC<Props> = ({
       newInfo = applyTemporaryInfoToCase(info, newItem, undefined);
     }
     const updatedCase = await updateCase(id, { info: newInfo });
+    // Need to save only changes made here to DB, but merge them with other unsaved changes for currentState
+    setSavedConnectedCase(updatedCase, task.taskSid);
     setConnectedCase(updatedCase, task.taskSid, connectedCaseState.caseHasBeenEdited);
   };
 
@@ -191,7 +194,7 @@ const AddEditCaseItem: React.FC<Props> = ({
   }
 
   async function saveAndStay() {
-    await save(true);
+    await save();
     if (isAddTemporaryCaseInfo(temporaryCaseInfo)) {
       const blankForm = formDefinition.reduce(createStateItem, {});
       methods.reset(blankForm); // Resets the form.
@@ -201,7 +204,7 @@ const AddEditCaseItem: React.FC<Props> = ({
   }
 
   async function saveAndLeave() {
-    await save(false);
+    await save();
     close();
   }
 
@@ -284,6 +287,7 @@ const mapDispatchToProps = {
   updateTempInfo: CaseActions.updateTempInfo,
   updateCaseInfo: CaseActions.updateCaseInfo,
   setConnectedCase: CaseActions.setConnectedCase,
+  setSavedConnectedCase: CaseActions.setSavedConnectedCase,
   changeRoute: RoutingActions.changeRoute,
 };
 

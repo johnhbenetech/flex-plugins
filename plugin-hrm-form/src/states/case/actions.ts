@@ -3,6 +3,7 @@ import {
   CaseActionType,
   TemporaryCaseInfo,
   SET_CONNECTED_CASE,
+  SET_SAVED_CONNECTED_CASE,
   REMOVE_CONNECTED_CASE,
   UPDATE_CASE_INFO,
   UPDATE_TEMP_INFO,
@@ -16,6 +17,13 @@ export const setConnectedCase = (connectedCase: Case, taskId: string, caseHasBee
   connectedCase,
   taskId,
   caseHasBeenEdited,
+});
+
+// Action creators
+export const setSavedConnectedCase = (savedConnectedCase: Case, taskId: string): CaseActionType => ({
+  type: SET_SAVED_CONNECTED_CASE,
+  savedConnectedCase,
+  taskId,
 });
 
 export const removeConnectedCase = (taskId: string): CaseActionType => ({

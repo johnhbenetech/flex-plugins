@@ -16,6 +16,7 @@ import * as ConfigActions from '../../states/configuration/actions';
 import { StandaloneSearchContainer } from '../../styles/search';
 import { RootState, namespace, configurationBase } from '../../states';
 import { getCasesMissingVersions } from '../../utils/definitionVersions';
+import { setSavedConnectedCase } from '../../states/case/actions';
 
 export const CASES_PER_PAGE = 5;
 
@@ -119,6 +120,7 @@ const CaseList: React.FC<Props> = ({ setConnectedCase, definitionVersions, updat
 
   const handleClickViewCase = currentCase => () => {
     setConnectedCase(currentCase, standaloneTask.taskSid, false);
+    setSavedConnectedCase(currentCase, standaloneTask.taskSid);
     dispatch({ type: 'showCaseDetails' });
   };
 

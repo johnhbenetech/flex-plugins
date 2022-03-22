@@ -10,6 +10,7 @@ import {
   UPDATE_TEMP_INFO,
   UPDATE_CASE_STATUS,
   MARK_CASE_AS_UPDATED,
+  SET_SAVED_CONNECTED_CASE,
 } from './types';
 import { GeneralActionType, REMOVE_CONTACT_STATE } from '../types';
 
@@ -17,6 +18,7 @@ export type CaseState = {
   tasks: {
     [taskId: string]: {
       connectedCase: Case;
+      savedConnectedCase: Case; // The case as it is saved in the backend
       temporaryCaseInfo?: TemporaryCaseInfo;
       caseHasBeenEdited: Boolean;
       prevStatus: string; // the status as it comes from the DB (required as it may be locally updated in connectedCase)
@@ -36,10 +38,22 @@ export function reduce(state = initialState, action: CaseActionType | GeneralAct
         tasks: {
           ...state.tasks,
           [action.taskId]: {
+            ...state.tasks[action.taskId],
             connectedCase: action.connectedCase,
             temporaryCaseInfo: null,
             caseHasBeenEdited: action.caseHasBeenEdited,
             prevStatus: action.connectedCase.status,
+          },
+        },
+      };
+    case SET_SAVED_CONNECTED_CASE:
+      return {
+        ...state,
+        tasks: {
+          ...state.tasks,
+          [action.taskId]: {
+            ...state.tasks[action.taskId],
+            savedConnectedCase: action.savedConnectedCase,
           },
         },
       };

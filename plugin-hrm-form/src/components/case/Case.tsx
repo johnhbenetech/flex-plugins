@@ -36,6 +36,7 @@ import { recordBackendError } from '../../fullStory';
 import { completeTask, submitContactForm } from '../../services/formSubmissionHelpers';
 import { getPermissionsForCase } from '../../permissions';
 import { CenteredContainer } from '../../styles/case';
+import { setSavedConnectedCase } from '../../states/case/actions';
 
 export const isStandaloneITask = (task): task is StandaloneITask => {
   return task && task.taskSid === 'standalone-task-sid';
@@ -233,6 +234,7 @@ const Case: React.FC<Props> = ({
     try {
       const updatedCase = await updateCase(connectedCase.id, { ...connectedCase });
       setConnectedCase(updatedCase, task.taskSid, false);
+      setSavedConnectedCase(updatedCase, task.taskSid);
       updateCases(task.taskSid, updatedCase);
       // IF case has been edited from All Cases view, we should update that view
       if (updateAllCasesView) {

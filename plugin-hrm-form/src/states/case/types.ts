@@ -5,6 +5,7 @@ import { CaseItemAction, CaseSectionSubroute, NewCaseSubroutes } from '../routin
 
 // Action types
 export const SET_CONNECTED_CASE = 'SET_CONNECTED_CASE';
+export const SET_SAVED_CONNECTED_CASE = 'SET_SAVED_CONNECTED_CASE';
 export const REMOVE_CONNECTED_CASE = 'REMOVE_CONNECTED_CASE';
 export const UPDATE_CASE_INFO = 'UPDATE_CASE_INFO';
 export const UPDATE_TEMP_INFO = 'UPDATE_TEMP_INFO';
@@ -64,6 +65,12 @@ type SetConnectedCaseAction = {
   caseHasBeenEdited: Boolean;
 };
 
+type SetSavedConnectedCaseAction = {
+  type: typeof SET_SAVED_CONNECTED_CASE;
+  savedConnectedCase: t.Case;
+  taskId: string;
+};
+
 type RemoveConnectedCaseAction = {
   type: typeof REMOVE_CONNECTED_CASE;
   taskId: string;
@@ -94,6 +101,7 @@ type MarkCaseAsUpdated = {
 
 export type CaseActionType =
   | SetConnectedCaseAction
+  | SetSavedConnectedCaseAction
   | RemoveConnectedCaseAction
   | UpdateCaseInfoAction
   | TemporaryCaseInfoAction
