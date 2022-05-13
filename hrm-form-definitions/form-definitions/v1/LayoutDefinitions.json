@@ -1,7 +1,6 @@
 {
   "contact": {
-    "callerInformation": {
-    },
+    "callerInformation": {},
     "childInformation": {
       "splitFormAt": 12
     },
@@ -19,14 +18,14 @@
     "incidents": {
       "previewFields": ["date", "duration", "location"],
       "layout": {
-        "date":  {
-            "includeLabel": false,
-            "format": "date"
-          },
-        "duration":  {
-            "includeLabel": true
-          },
-        "location":  {
+        "date": {
+          "includeLabel": false,
+          "format": "date"
+        },
+        "duration": {
+          "includeLabel": true
+        },
+        "location": {
           "includeLabel": true
         }
       },
@@ -37,6 +36,7 @@
     },
     "documents": {
       "splitFormAt": 1
-    }
+    },
+    "hideCounselorDetails": ["SafeSpot"]
   }
 }

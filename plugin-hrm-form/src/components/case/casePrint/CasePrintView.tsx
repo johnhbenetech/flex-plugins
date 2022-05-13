@@ -5,13 +5,21 @@ import { Page, Document, View, PDFViewer } from '@react-pdf/renderer';
 import { Template, Strings } from '@twilio/flex-ui';
 import { ButtonBase, CircularProgress } from '@material-ui/core';
 import { Close } from '@material-ui/icons';
-import { DefinitionVersion, FormDefinition, callTypes } from 'hrm-form-definitions';
+import {
+  DefinitionVersion,
+  FormDefinition,
+  callTypes,
+} from 'hrm-form-definitions';
 
 import { getConfig } from '../../../HrmFormPlugin';
 import CasePrintSection from './CasePrintSection';
 import CasePrintSummary from './CasePrintSummary';
 import styles from './styles';
-import { CasePrintViewContainer, CasePrintViewSpinner, HiddenText } from '../../../styles/HrmStyles';
+import {
+  CasePrintViewContainer,
+  CasePrintViewSpinner,
+  HiddenText,
+} from '../../../styles/HrmStyles';
 import CasePrintDetails from './CasePrintDetails';
 import type { CaseDetails } from '../../../states/case/types';
 import CasePrintMultiSection from './CasePrintMultiSection';
@@ -30,7 +38,12 @@ type OwnProps = {
 };
 type Props = OwnProps;
 
-const CasePrintView: React.FC<Props> = ({ onClickClose, caseDetails, definitionVersion, counselorsHash }) => {
+const CasePrintView: React.FC<Props> = ({
+  onClickClose,
+  caseDetails,
+  definitionVersion,
+  counselorsHash,
+}) => {
   const { pdfImagesSource, strings } = getConfig();
 
   const logoSource = `${pdfImagesSource}/helpline-logo.png`;
@@ -62,6 +75,13 @@ const CasePrintView: React.FC<Props> = ({ onClickClose, caseDetails, definitionV
       },
     ];
 
+    console.log(
+      'Definition data',
+      caseDetails,
+      definitionVersion,
+      counselorsHash
+    );
+
     /**
      * Loads the collection of image BLOBs in memory (using setState callbacks)
      * @param imgSources ImageSources (url and callbacks)
@@ -82,7 +102,11 @@ const CasePrintView: React.FC<Props> = ({ onClickClose, caseDetails, definitionV
 
   return (
     <CasePrintViewContainer>
-      <ButtonBase onClick={onClickClose} style={{ marginLeft: 'auto' }} data-testid="CasePrint-CloseCross">
+      <ButtonBase
+        onClick={onClickClose}
+        style={{ marginLeft: 'auto' }}
+        data-testid="CasePrint-CloseCross"
+      >
         <HiddenText>
           <Template code="Case-CloseButton" />
         </HiddenText>
@@ -116,16 +140,21 @@ const CasePrintView: React.FC<Props> = ({ onClickClose, caseDetails, definitionV
                   caseManager={caseDetails.office?.manager}
                   chkOnBlob={chkOnBlob}
                   chkOffBlob={chkOffBlob}
+                  definitionVersion={definitionVersion}
                 />
                 {caseDetails.contact?.rawJson?.callType === callTypes.caller ? (
                   <View>
                     <CasePrintSection
                       sectionName={strings['SectionName-CallerInformation']}
                       definitions={[
-                        ...definitionVersion.tabbedForms.CaseInformationTab.filter(definition => {
-                          // eslint-disable-next-line
-                          return definition['highlightedAtCasePrint'] ? definition : null;
-                        }),
+                        ...definitionVersion.tabbedForms.CaseInformationTab.filter(
+                          definition => {
+                            // eslint-disable-next-line
+                            return definition['highlightedAtCasePrint']
+                              ? definition
+                              : null;
+                          }
+                        ),
                         ...definitionVersion.tabbedForms.CallerInformationTab,
                       ]}
                       values={{
@@ -136,7 +165,9 @@ const CasePrintView: React.FC<Props> = ({ onClickClose, caseDetails, definitionV
                     />
                     <CasePrintSection
                       sectionName={strings['SectionName-ChildInformation']}
-                      definitions={definitionVersion.tabbedForms.ChildInformationTab}
+                      definitions={
+                        definitionVersion.tabbedForms.ChildInformationTab
+                      }
                       values={caseDetails.contact?.rawJson?.childInformation}
                       unNestInfo={true}
                     />
@@ -145,10 +176,14 @@ const CasePrintView: React.FC<Props> = ({ onClickClose, caseDetails, definitionV
                   <CasePrintSection
                     sectionName={strings['SectionName-ChildInformation']}
                     definitions={[
-                      ...definitionVersion.tabbedForms.CaseInformationTab.filter(definition => {
-                        // eslint-disable-next-line
-                        return definition['highlightedAtCasePrint'] ? definition : null;
-                      }),
+                      ...definitionVersion.tabbedForms.CaseInformationTab.filter(
+                        definition => {
+                          // eslint-disable-next-line
+                          return definition['highlightedAtCasePrint']
+                            ? definition
+                            : null;
+                        }
+                      ),
                       ...definitionVersion.tabbedForms.ChildInformationTab,
                     ]}
                     values={{
@@ -188,7 +223,10 @@ const CasePrintView: React.FC<Props> = ({ onClickClose, caseDetails, definitionV
                   sectionKey="referral"
                   values={caseDetails.referrals}
                 />
-                <CasePrintNotes notes={caseDetails.notes} counselorsHash={counselorsHash} />
+                <CasePrintNotes
+                  notes={caseDetails.notes}
+                  counselorsHash={counselorsHash}
+                />
                 <CasePrintSummary summary={caseDetails.summary} />
               </View>
               <CasePrintFooter />

@@ -24,12 +24,19 @@ export const getConfig = () => {
   const manager = Flex.Manager.getInstance();
 
   const hrmBaseUrl = `${manager.serviceConfiguration.attributes.hrm_base_url}/${manager.serviceConfiguration.attributes.hrm_api_version}/accounts/${manager.workerClient.accountSid}`;
-  const serverlessBaseUrl = manager.serviceConfiguration.attributes.serverless_base_url;
+  const serverlessBaseUrl =
+    manager.serviceConfiguration.attributes.serverless_base_url;
   const logoUrl = manager.serviceConfiguration.attributes.logo_url;
   const chatServiceSid = manager.serviceConfiguration.chat_service_instance_sid;
   const workerSid = manager.workerClient.sid;
-  const { helpline, counselorLanguage, full_name: counselorName, roles } = manager.workerClient.attributes as any;
-  const currentWorkspace = manager.serviceConfiguration.taskrouter_workspace_sid;
+  const {
+    helpline,
+    counselorLanguage,
+    full_name: counselorName,
+    roles,
+  } = manager.workerClient.attributes as any;
+  const currentWorkspace =
+    manager.serviceConfiguration.taskrouter_workspace_sid;
   const { identity, token } = manager.user;
   const isSupervisor = roles.includes('supervisor');
   const {
@@ -39,9 +46,13 @@ export const getConfig = () => {
     multipleOfficeSupport,
     permissionConfig,
   } = manager.serviceConfiguration.attributes;
-  const featureFlags = manager.serviceConfiguration.attributes.feature_flags || {};
-  const contactsWaitingChannels = manager.serviceConfiguration.attributes.contacts_waiting_channels || null;
-  const { strings } = (manager as unknown) as { strings: { [key: string]: string } };
+  const featureFlags =
+    manager.serviceConfiguration.attributes.feature_flags || {};
+  const contactsWaitingChannels =
+    manager.serviceConfiguration.attributes.contacts_waiting_channels || null;
+  const { strings } = (manager as unknown) as {
+    strings: { [key: string]: string };
+  };
 
   return {
     hrmBaseUrl,
@@ -78,16 +89,21 @@ export type SetupObject = ReturnType<typeof getConfig> & {
  * Helper to expose the forms definitions without the need of calling Manager
  */
 export const getDefinitionVersions = () => {
-  const { currentDefinitionVersion, definitionVersions } = (Flex.Manager.getInstance().store.getState() as RootState)[
-    namespace
-  ][configurationBase];
+  const {
+    currentDefinitionVersion,
+    definitionVersions,
+  } = (Flex.Manager.getInstance().store.getState() as RootState)[namespace][
+    configurationBase
+  ];
 
   return { currentDefinitionVersion, definitionVersions };
 };
 
 export const reRenderAgentDesktop = async () => {
   await Flex.Actions.invokeAction('NavigateToView', { viewName: 'empty-view' });
-  await Flex.Actions.invokeAction('NavigateToView', { viewName: 'agent-desktop' });
+  await Flex.Actions.invokeAction('NavigateToView', {
+    viewName: 'agent-desktop',
+  });
 };
 
 const setUpSharedStateClient = () => {
@@ -105,7 +121,9 @@ const setUpSharedStateClient = () => {
     try {
       const syncToken = await issueSyncToken();
       sharedStateClient = new SyncClient(syncToken);
-      sharedStateClient.on('tokenAboutToExpire', () => updateSharedStateToken());
+      sharedStateClient.on('tokenAboutToExpire', () =>
+        updateSharedStateToken()
+      );
     } catch (err) {
       console.error('SYNC CLIENT INIT ERROR', err);
     }
@@ -117,15 +135,22 @@ const setUpSharedStateClient = () => {
 const setUpTransferredTaskJanitor = async (setupObject: SetupObject) => {
   const { workerSid } = setupObject;
   const query = 'data.attributes.transferStarted == "true"';
-  const reservationQuery = await Flex.Manager.getInstance().insightsClient.liveQuery('tr-reservation', query);
+  const reservationQuery = await Flex.Manager.getInstance().insightsClient.liveQuery(
+    'tr-reservation',
+    query
+  );
   reservationQuery.on('itemUpdated', args => {
     if (TransferHelpers.shouldInvokeCompleteTask(args.value, workerSid)) {
-      Flex.Actions.invokeAction('CompleteTask', { sid: args.value.reservation_sid });
+      Flex.Actions.invokeAction('CompleteTask', {
+        sid: args.value.reservation_sid,
+      });
       return;
     }
 
     if (TransferHelpers.shouldTakeControlBack(args.value, workerSid)) {
-      const task = Flex.TaskHelper.getTaskByTaskSid(args.value.attributes.transferMeta.originalReservation);
+      const task = Flex.TaskHelper.getTaskByTaskSid(
+        args.value.attributes.transferMeta.originalReservation
+      );
       TransferHelpers.takeTaskControl(task).then(async () => {
         await TransferHelpers.clearTransferMeta(task);
       });
@@ -148,7 +173,9 @@ const setUpLocalization = (config: ReturnType<typeof getConfig>) => {
     (manager.strings = { ...manager.strings, ...newStrings });
   const afterNewStrings = (language: string) => {
     manager.store.dispatch(changeLanguage(language));
-    Flex.Actions.invokeAction('NavigateToView', { viewName: manager.store.getState().flex.view.activeView }); // force a re-render
+    Flex.Actions.invokeAction('NavigateToView', {
+      viewName: manager.store.getState().flex.view.activeView,
+    }); // force a re-render
   };
   const localizationConfig = { twilioStrings, setNewStrings, afterNewStrings };
   const initialLanguage = counselorLanguage || helplineLanguage;
@@ -203,14 +230,24 @@ const setUpActions = (setupObject: SetupObject) => {
   const beforeCompleteAction = ActionFunctions.beforeCompleteTask(setupObject);
   const afterCompleteAction = ActionFunctions.afterCompleteTask(setupObject);
 
-  Flex.Actions.addListener('beforeAcceptTask', ActionFunctions.initializeContactForm);
+  Flex.Actions.addListener(
+    'beforeAcceptTask',
+    ActionFunctions.initializeContactForm
+  );
 
-  Flex.Actions.addListener('afterAcceptTask', ActionFunctions.afterAcceptTask(setupObject));
-
-  if (featureFlags.enable_transfers) Flex.Actions.replaceAction('TransferTask', transferOverride);
+  Flex.Actions.addListener(
+    'afterAcceptTask',
+    ActionFunctions.afterAcceptTask(setupObject)
+  );
 
   if (featureFlags.enable_transfers)
-    Flex.Actions.addListener('afterCancelTransfer', ActionFunctions.afterCancelTransfer);
+    Flex.Actions.replaceAction('TransferTask', transferOverride);
+
+  if (featureFlags.enable_transfers)
+    Flex.Actions.addListener(
+      'afterCancelTransfer',
+      ActionFunctions.afterCancelTransfer
+    );
 
   Flex.Actions.replaceAction('HangupCall', ActionFunctions.hangupCall);
 
@@ -261,7 +298,9 @@ export default class HrmFormPlugin extends FlexPlugin {
     const { hrmBaseUrl } = config;
     console.log(`HRM URL: ${hrmBaseUrl}`);
     if (hrmBaseUrl === undefined) {
-      console.error('HRM base URL not defined, you must provide this to save program data');
+      console.error(
+        'HRM base URL not defined, you must provide this to save program data'
+      );
     }
   }
 
@@ -271,7 +310,9 @@ export default class HrmFormPlugin extends FlexPlugin {
   registerReducers(manager: Flex.Manager) {
     if (!manager.store.addReducer) {
       // eslint: disable-next-line
-      console.error(`You need FlexUI > 1.9.0 to use built-in redux; you are currently on ${Flex.VERSION}`);
+      console.error(
+        `You need FlexUI > 1.9.0 to use built-in redux; you are currently on ${Flex.VERSION}`
+      );
       return;
     }
 

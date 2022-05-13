@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 import { Text, View, Image } from '@react-pdf/renderer';
-import { DefinitionVersionId } from 'hrm-form-definitions';
+import { DefinitionVersionId, DefinitionVersion } from 'hrm-form-definitions';
 
 import { getConfig } from '../../../HrmFormPlugin';
 import styles from './styles';
@@ -28,6 +28,7 @@ type OwnProps = {
   version: DefinitionVersionId;
   chkOnBlob?: string;
   chkOffBlob?: string;
+  definitionVersion: DefinitionVersion;
 };
 
 type Props = OwnProps;
@@ -44,8 +45,20 @@ const CasePrintDetails: React.FC<Props> = ({
   version,
   chkOnBlob,
   chkOffBlob,
+  definitionVersion,
 }) => {
   const { strings } = getConfig();
+
+  const { helplines } = definitionVersion.helplineInformation;
+
+  const { hideCounselorDetails } = definitionVersion.layoutVersion.case;
+
+  const getHelplinesValues = helplines.map(
+    data =>
+      typeof hideCounselorDetails === 'object' &&
+      hideCounselorDetails.includes(data.value)
+  );
+  //replace array with false to deactivate
 
   return (
     <View style={styles.caseDetailsContainer}>
@@ -65,33 +78,46 @@ const CasePrintDetails: React.FC<Props> = ({
         </View>
         <View style={styles.flexColumn}>
           <Text>{strings['Case-CaseDetailsFollowUpDate']}</Text>
-          <Text style={styles.caseDetailsBoldText}>{followUpDate ? followUpDate : '-'}</Text>
+          <Text style={styles.caseDetailsBoldText}>
+            {followUpDate ? followUpDate : '-'}
+          </Text>
         </View>
         <View style={styles.flexColumn}>
           <Text />
           <View style={{ ...styles.flexRow, justifyContent: 'space-between' }}>
-            <Image style={styles.imgCheckbox} src={childIsAtRisk ? chkOnBlob : chkOffBlob} />
+            <Image
+              style={styles.imgCheckbox}
+              src={childIsAtRisk ? chkOnBlob : chkOffBlob}
+            />
             <Text> {strings['Case-ChildIsAtRisk']}</Text>
           </View>
         </View>
       </View>
-      <View style={styles.caseDetailsSubSection}>
-        <View style={styles.caseCounsellorSection}>
-          <View style={styles.flexColumn}>
-            <Text>{strings['Case-Counsellor']}</Text>
-            <Text style={styles.caseDetailsBoldText}>{counselor}</Text>
+      {getHelplinesValues.includes(true) ? null : (
+        <View style={styles.caseDetailsSubSection}>
+          <View style={styles.caseCounsellorSection}>
+            <View style={styles.flexColumn}>
+              <Text>{strings['Case-Counsellor']}</Text>
+              <Text style={styles.caseDetailsBoldText}>{counselor}</Text>
+            </View>
+            <View style={{ marginTop: 15, ...styles.flexColumn }}>
+              <Text>{strings['Case-CaseManager']}</Text>
+              <Text style={styles.caseDetailsBoldText}>
+                {caseManager?.name}
+              </Text>
+              <Text style={styles.caseDetailsBoldText}>
+                {caseManager?.phone}
+              </Text>
+              <Text style={styles.caseDetailsBoldText}>
+                {caseManager?.email}
+              </Text>
+            </View>
           </View>
-          <View style={{ marginTop: 15, ...styles.flexColumn }}>
-            <Text>{strings['Case-CaseManager']}</Text>
-            <Text style={styles.caseDetailsBoldText}>{caseManager?.name}</Text>
-            <Text style={styles.caseDetailsBoldText}>{caseManager?.phone}</Text>
-            <Text style={styles.caseDetailsBoldText}>{caseManager?.email}</Text>
+          <View>
+            <CasePrintCategories categories={categories} version={version} />
           </View>
         </View>
-        <View>
-          <CasePrintCategories categories={categories} version={version} />
-        </View>
-      </View>
+      )}
     </View>
   );
 };

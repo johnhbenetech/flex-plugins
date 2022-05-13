@@ -4,7 +4,12 @@ import { connect, ConnectedProps } from 'react-redux';
 import { Actions, withTheme } from '@twilio/flex-ui';
 
 import { getConfig } from '../HrmFormPlugin';
-import { CannedResponsesContainer, FormSelect, FormSelectWrapper, FormOption } from '../styles/HrmStyles';
+import {
+  CannedResponsesContainer,
+  FormSelect,
+  FormSelectWrapper,
+  FormOption,
+} from '../styles/HrmStyles';
 import { RootState, namespace, configurationBase } from '../states';
 
 type OwnProps = {
@@ -27,16 +32,28 @@ const CannedResponses: React.FC<Props> = props => {
 
   if (!cannedResponses) return null;
 
+  console.log('check cannedres here', strings, props);
+
   return (
     <CannedResponsesContainer>
       <FormSelectWrapper fullWidth={true}>
-        <FormSelect id="canned_response" name="canned_response" onChange={handleChange} value="" fullWidth={true}>
+        <FormSelect
+          id="canned_response"
+          name="canned_response"
+          onChange={handleChange}
+          value=""
+          fullWidth={true}
+        >
           <FormOption disabled selected isEmptyValue={true} value="">
             {strings.CannedResponses}
           </FormOption>
           {cannedResponses.map(r => {
             return (
-              <FormOption key={r.label} value={r.text} isEmptyValue={r.text === ''}>
+              <FormOption
+                key={r.label}
+                value={r.text}
+                isEmptyValue={r.text === ''}
+              >
                 {r.label}
               </FormOption>
             );
@@ -50,7 +67,9 @@ const CannedResponses: React.FC<Props> = props => {
 const mapStateToProps = (state: RootState) => {
   return {
     state,
-    cannedResponses: state[namespace][configurationBase].currentDefinitionVersion?.cannedResponses,
+    cannedResponses:
+      state[namespace][configurationBase].currentDefinitionVersion
+        ?.cannedResponses,
   };
 };
 
