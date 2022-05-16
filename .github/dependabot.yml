@@ -4,22 +4,28 @@ updates:
     directory: "/scripts/"
     schedule:
       interval: "monthly"
+    open-pull-requests-limit: 1
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-patch"]
+        dependency-type: "production"
         
   - package-ecosystem: "npm"
     directory: "/plugin-hrm-form/"
     schedule:
       interval: "monthly"
+    open-pull-requests-limit: 1
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-patch"]
+        dependency-type: "production"
 
   - package-ecosystem: "npm"
     directory: "/hrm-form-definitions/"
     schedule:
       interval: "monthly"
+    open-pull-requests-limit: 1
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-patch"]
+        dependency-type: "production"
