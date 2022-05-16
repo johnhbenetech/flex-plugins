@@ -29,7 +29,7 @@
     "prop-types": "^15.7.2",
     "react": "~16.13.1",
     "react-dom": "~16.13.1",
-    "react-hook-form": "^6.11.0",
+    "react-hook-form": "^7.31.1",
     "react-keyboard-event-handler": "^1.5.4",
     "@material-ui/core": "^3.9.4",
     "@material-ui/icons": "^3.0.2",
