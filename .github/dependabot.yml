@@ -1,0 +1,25 @@
+version: 2
+updates:
+    - package-ecosystem: "npm"
+        directory: "/scripts/"
+        schedule:
+            interval: "monthly"
+        ignore:
+            - dependency-name: "*"
+            update-types: ["version-update:semver-patch"]
+
+    - package-ecosystem: "npm"
+        directory: "/plugin-hrm-form/"
+        schedule:
+            interval: "monthly"
+        ignore:
+            - dependency-name: "*"
+            update-types: ["version-update:semver-patch"]
+
+    - package-ecosystem: "npm"
+        directory: "/hrm-form-definitions/"
+        schedule:
+            interval: "monthly"
+        ignore:
+            - dependency-name: "*"
+            update-types: ["version-update:semver-patch"]
